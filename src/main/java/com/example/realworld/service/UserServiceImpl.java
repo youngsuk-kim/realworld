@@ -1,7 +1,7 @@
 package com.example.realworld.service;
 
 import com.example.realworld.controller.dto.*;
-import com.example.realworld.entity.Member;
+import com.example.realworld.entity.User;
 import com.example.realworld.entity.RefreshToken;
 import com.example.realworld.repository.UserRepo;
 import com.example.realworld.repository.RefreshTokenRepo;
@@ -30,23 +30,23 @@ public class UserServiceImpl implements UserService{
     private final RefreshTokenRepo refreshTokenRepository;
 
     @Transactional(readOnly = true)
-    public MemberResponseDto getCurrentUser(Principal principal, HttpServletRequest request) {
-        Member findUser = memberRepo.findById(Long.valueOf(principal.getName()))
+    public UserResponseDto getCurrentUser(Principal principal, HttpServletRequest request) {
+        User findUser = memberRepo.findById(Long.valueOf(principal.getName()))
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
-        return MemberResponseDto.of(findUser, resolveToken(request));
+        return UserResponseDto.of(findUser, resolveToken(request));
     }
 
-    public MemberResponseDto signup(SignUpRequestDto memberRequestDto) {
+    public UserResponseDto signup(SignUpRequestDto memberRequestDto) {
         if (memberRepo.existsByEmail(memberRequestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
 
-        Member member = memberRequestDto.toMember(passwordEncoder);
-        return MemberResponseDto.of(memberRepo.save(member), null);
+        User user = memberRequestDto.toMember(passwordEncoder);
+        return UserResponseDto.of(memberRepo.save(user), null);
     }
 
-    public MemberResponseDto login(LoginRequestDto memberRequestDto) {
+    public UserResponseDto login(LoginRequestDto memberRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
@@ -64,24 +64,24 @@ public class UserServiceImpl implements UserService{
 
         refreshTokenRepository.save(refreshToken);
 
-        Member findMember = memberRepo.findByEmail(memberRequestDto.getEmail())
+        User findUser = memberRepo.findByEmail(memberRequestDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("user not found exception"));
 
         // 5. 토큰 발급
-        return MemberResponseDto.of(findMember, tokenDto.getAccessToken());
+        return UserResponseDto.of(findUser, tokenDto.getAccessToken());
     }
 
-    public MemberResponseDto updateUser(Principal principal, UpdateUserRequest dto, HttpServletRequest request) {
-        Member findMember = memberRepo.findById(Long.valueOf(principal.getName()))
+    public UserResponseDto updateUser(Principal principal, UpdateUserRequest dto, HttpServletRequest request) {
+        User findUser = memberRepo.findById(Long.valueOf(principal.getName()))
                 .orElseThrow(() -> new RuntimeException("user not found by Id"));
 
-        findMember.updateUser(dto.getEmail(), dto.getUserName(), dto.getImage(), dto.getBio());
+        findUser.updateUser(dto.getEmail(), dto.getUserName(), dto.getImage(), dto.getBio());
 
         if (dto.getPassword() != null) {
-            findMember.changePassword(passwordEncoder.encode(dto.getPassword()));
+            findUser.changePassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        return MemberResponseDto.of(findMember, resolveToken(request));
+        return UserResponseDto.of(findUser, resolveToken(request));
     }
 
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {

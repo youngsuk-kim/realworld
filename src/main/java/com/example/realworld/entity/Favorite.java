@@ -22,9 +22,9 @@ public class Favorite {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private User user;
 
-    public boolean isFavoriteArticle(Member member) {
-        return this.member.equals(member);
+    public boolean isFavoriteArticle(User user) {
+        return this.user.equals(user);
     }
 }

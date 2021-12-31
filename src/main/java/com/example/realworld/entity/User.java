@@ -12,14 +12,14 @@ import java.util.Objects;
 
 @Builder
 @Entity
-@Table(name = "member")
+@Table(name = "user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Member {
+public class User {
 
     @Id
-    @Column(name = "member_id")
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -40,7 +40,7 @@ public class Member {
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> follow = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "user")
     private List<Article> articles = new ArrayList<>();
 
     public void updateUser(String email, String userName, String image, String bio) {
@@ -58,8 +58,8 @@ public class Member {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Member member = (Member) o;
-        return id != null && Objects.equals(id, member.id);
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
     }
 
     @Override

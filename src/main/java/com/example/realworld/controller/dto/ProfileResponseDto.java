@@ -1,6 +1,6 @@
 package com.example.realworld.controller.dto;
 
-import com.example.realworld.entity.Member;
+import com.example.realworld.entity.User;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 
@@ -17,11 +17,11 @@ public class ProfileResponseDto {
     private String image;
     private Boolean following;
 
-    public static ProfileResponseDto of(Member member, Boolean isFollowing) {
+    public static ProfileResponseDto of(User user, Boolean isFollowing) {
         return ProfileResponseDto.builder()
-                .bio(member.getBio())
-                .image(member.getImage())
-                .userName(member.getUserName())
+                .bio(user.getBio())
+                .image(user.getImage())
+                .userName(user.getUserName())
                 .following(isFollowing)
                 .build();
     }

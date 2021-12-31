@@ -14,8 +14,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Follow {
 
-    public Follow(Member member, Member follower) {
-        this(null, member, follower);
+    public Follow(User user, User follower) {
+        this(null, user, follower);
     }
 
     @Id
@@ -25,14 +25,14 @@ public class Follow {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "follower_id")
-    private Member follower;
+    private User follower;
 
-    public boolean isFollowing(Member member) {
-        return follower.equals(member);
+    public boolean isFollowing(User user) {
+        return follower.equals(user);
     }
 
     @Override

@@ -1,11 +1,10 @@
 package com.example.realworld.security;
 
-import com.example.realworld.entity.Member;
+import com.example.realworld.entity.User;
 import com.example.realworld.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,23 +17,23 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepo memberRepository;
+    private final UserRepo userRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(username)
+        return userRepository.findByEmail(username)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
     }
 
     // DB 에 User 값이 존재한다면 UserDetails 객체로 만들어서 리턴
-    private UserDetails createUserDetails(Member member) {
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getAuthority().toString());
+    private UserDetails createUserDetails(User user) {
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getAuthority().toString());
 
-        return new User(
-                String.valueOf(member.getId()),
-                member.getPassword(),
+        return new org.springframework.security.core.userdetails.User(
+                String.valueOf(user.getId()),
+                user.getPassword(),
                 Collections.singleton(grantedAuthority)
         );
     }

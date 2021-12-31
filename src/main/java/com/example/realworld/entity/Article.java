@@ -23,7 +23,7 @@ public class Article extends Base {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private User user;
 
     private String slug;
 

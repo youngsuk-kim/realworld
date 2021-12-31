@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 import static com.example.realworld.entity.QArticle.article;
-import static com.example.realworld.entity.QMember.member;
+import static com.example.realworld.entity.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
@@ -46,7 +46,7 @@ public class ArticleQueryRepo {
                 .select(Projections.constructor(
                         FavoriteDto.class,
                         new CaseBuilder()
-                                .when(QFavorite.favorite.member.id.eq(userId)).then(true)
+                                .when(QFavorite.favorite.user.id.eq(userId)).then(true)
                                 .otherwise(false).as("favorited")
                         ))
                 .from(QFavorite.favorite)
@@ -58,18 +58,18 @@ public class ArticleQueryRepo {
         return jpaQueryFactory
                 .select(Projections.fields(
                         AuthorResponseDto.class,
-                        member.id,
-                        member.userName,
-                        member.bio,
-                        member.image,
+                        user.id,
+                        user.userName,
+                        user.bio,
+                        user.image,
                         new CaseBuilder()
                                 .when(QFollow.follow.follower.id.eq(userId)).then(true)
                                 .otherwise(false).as("following")
 
                 ))
-                .from(member)
-                .leftJoin(member.follow, QFollow.follow)
-                .leftJoin(member.articles, article)
+                .from(user)
+                .leftJoin(user.follow, QFollow.follow)
+                .leftJoin(user.articles, article)
                 .where(article.id.eq(articleId))
                 .fetchOne();
     }
@@ -78,7 +78,7 @@ public class ArticleQueryRepo {
         return jpaQueryFactory
                 .from(article)
                 .leftJoin(article.tagList, QTag.tag)
-                .leftJoin(article.member, member)
+                .leftJoin(article.user, user)
                 .where(eqTag(tag), eqAuthor(author))
                 .transform(
                         groupBy(article.id).list(
@@ -107,7 +107,7 @@ public class ArticleQueryRepo {
         if (!StringUtils.hasText(author)) {
             return null;
         }
-        return member.userName.eq(author);
+        return user.userName.eq(author);
     }
 
     private BooleanExpression eqTag(String tag) {
@@ -121,6 +121,6 @@ public class ArticleQueryRepo {
         if (!StringUtils.hasText(favorited)) {
             return null;
         }
-        return QFavorite.favorite.member.userName.eq(favorited);
+        return QFavorite.favorite.user.userName.eq(favorited);
     }
 }

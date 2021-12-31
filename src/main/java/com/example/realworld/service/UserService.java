@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 public interface UserService {
-    MemberResponseDto getCurrentUser(Principal principal, HttpServletRequest request);
-    MemberResponseDto signup(SignUpRequestDto dto);
-    MemberResponseDto login(LoginRequestDto dto);
-    MemberResponseDto updateUser(Principal principal, UpdateUserRequest dto, HttpServletRequest request);
+    UserResponseDto getCurrentUser(Principal principal, HttpServletRequest request);
+    UserResponseDto signup(SignUpRequestDto dto);
+    UserResponseDto login(LoginRequestDto dto);
+    UserResponseDto updateUser(Principal principal, UpdateUserRequest dto, HttpServletRequest request);
     TokenDto reissue(TokenRequestDto tokenRequestDto);
 }
