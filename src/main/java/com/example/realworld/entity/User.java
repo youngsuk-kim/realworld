@@ -40,9 +40,6 @@ public class User {
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> follow = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<Article> articles = new ArrayList<>();
-
     public void updateUser(String email, String userName, String image, String bio) {
         if(email != null) this.email = email;
         if(userName != null) this.userName = userName;
