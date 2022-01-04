@@ -24,7 +24,7 @@ import static com.querydsl.core.group.GroupBy.list;
 
 @Repository
 @RequiredArgsConstructor
-public class ArticleQueryRepo {
+public class ArticleQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -69,7 +69,7 @@ public class ArticleQueryRepo {
                 ))
                 .from(user)
                 .leftJoin(user.follow, QFollow.follow)
-                .leftJoin(user.articles, article)
+                .leftJoin(article.user, user)
                 .where(article.id.eq(articleId))
                 .fetchOne();
     }

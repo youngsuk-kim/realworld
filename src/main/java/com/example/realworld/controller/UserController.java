@@ -2,12 +2,9 @@ package com.example.realworld.controller;
 
 import com.example.realworld.controller.dto.*;
 import com.example.realworld.service.UserService;
-import com.example.realworld.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 import java.security.Principal;
 
@@ -18,8 +15,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/user")
-    public ResponseEntity<UserResponseDto> currentUser(Principal principal, HttpServletRequest httpRequest) {
-        return ResponseEntity.ok(userService.getCurrentUser(principal, httpRequest));
+    public ResponseEntity<UserResponseDto> currentUser(Principal principal, @RequestHeader(name = "Authorization") String token) {
+        return ResponseEntity.ok(userService.getCurrentUser(principal, token));
     }
 
     @PostMapping("/users")
@@ -33,12 +30,8 @@ public class UserController {
     }
 
     @PutMapping("/user")
-    public ResponseEntity<UserResponseDto> updateUser(Principal principal, @RequestBody UpdateUserRequest dto, HttpServletRequest request) {
-        return ResponseEntity.ok(userService.updateUser(principal, dto, request));
+    public ResponseEntity<UserResponseDto> updateUser(Principal principal, @RequestBody UpdateUserRequest dto, @RequestHeader(name = "Authorization") String token) {
+        return ResponseEntity.ok(userService.updateUser(principal, dto, token));
     }
 
-    @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(userService.reissue(tokenRequestDto));
-    }
 }

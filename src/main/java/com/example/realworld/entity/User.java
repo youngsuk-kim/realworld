@@ -18,6 +18,14 @@ import java.util.Objects;
 @AllArgsConstructor
 public class User {
 
+    public User(Long id, String userName, String email, String password, String bio, String image, Authority authority) {
+        this(id, userName, email, password, bio, image, authority, null);
+    }
+
+    public User(String userName, String email, String password, String bio, String image, Authority authority) {
+        this(null, userName, email, password, bio, image, authority, null);
+    }
+
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

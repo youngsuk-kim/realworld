@@ -36,4 +36,11 @@ public class SecurityUtil {
         }
         return null;
     }
+
+    public static String resolveToken(String token) {
+        if (StringUtils.hasText(token) && token.startsWith(Token_PREFIX)) {
+            return token.substring(6);
+        }
+        return null;
+    }
 }

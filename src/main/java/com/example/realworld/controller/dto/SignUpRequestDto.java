@@ -21,7 +21,7 @@ public class SignUpRequestDto {
     private String password;
     private String userName;
 
-    public User toMember(PasswordEncoder passwordEncoder) {
+    public User toUser(PasswordEncoder passwordEncoder) {
         return User.builder()
                 .userName(userName)
                 .email(email)

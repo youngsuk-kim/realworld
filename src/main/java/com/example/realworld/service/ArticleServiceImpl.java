@@ -1,7 +1,7 @@
 package com.example.realworld.service;
 
 import com.example.realworld.controller.dto.ArticleListResponseDto;
-import com.example.realworld.repository.ArticleQueryRepo;
+import com.example.realworld.repository.ArticleQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService{
 
-    private final ArticleQueryRepo articleQueryRepo;
+    private final ArticleQueryRepository articleQueryRepository;
 
     @Override
     public ArticleListResponseDto getArticles(String tag, String author, String favorited, Long userId) {
-        return articleQueryRepo.getArticles(tag, author, favorited, userId);
+        return articleQueryRepository.getArticles(tag, author, favorited, userId);
     }
 }

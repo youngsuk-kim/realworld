@@ -3,8 +3,9 @@ package com.example.realworld.service;
 import com.example.realworld.controller.dto.*;
 import com.example.realworld.entity.User;
 import com.example.realworld.entity.RefreshToken;
-import com.example.realworld.repository.UserRepo;
-import com.example.realworld.repository.RefreshTokenRepo;
+import com.example.realworld.exception.UserNotFoundException;
+import com.example.realworld.repository.UserRepository;
+import com.example.realworld.repository.RefreshTokenRepository;
 import com.example.realworld.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 import static com.example.realworld.security.SecurityUtil.resolveToken;
@@ -22,28 +22,29 @@ import static com.example.realworld.security.SecurityUtil.resolveToken;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final UserRepo memberRepo;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepo refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional(readOnly = true)
-    public UserResponseDto getCurrentUser(Principal principal, HttpServletRequest request) {
-        User findUser = memberRepo.findById(Long.valueOf(principal.getName()))
-                .orElseThrow(() -> new RuntimeException("user not found"));
+    public UserResponseDto getCurrentUser(Principal principal, String token) {
+        User findUser = userRepository.findById(Long.valueOf(principal.getName()))
+                .orElseThrow(() -> new UserNotFoundException(Long.valueOf(principal.getName())));
 
-        return UserResponseDto.of(findUser, resolveToken(request));
+        return UserResponseDto.of(findUser, resolveToken(token));
     }
 
-    public UserResponseDto signup(SignUpRequestDto memberRequestDto) {
-        if (memberRepo.existsByEmail(memberRequestDto.getEmail())) {
+    public UserResponseDto signup(SignUpRequestDto signUpRequestDto) {
+        if (userRepository.existsByEmail(signUpRequestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
 
-        User user = memberRequestDto.toMember(passwordEncoder);
-        return UserResponseDto.of(memberRepo.save(user), null);
+        User user = signUpRequestDto.toUser(passwordEncoder);
+
+        return UserResponseDto.of(userRepository.save(user), null);
     }
 
     public UserResponseDto login(LoginRequestDto memberRequestDto) {
@@ -64,16 +65,16 @@ public class UserServiceImpl implements UserService{
 
         refreshTokenRepository.save(refreshToken);
 
-        User findUser = memberRepo.findByEmail(memberRequestDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("user not found exception"));
+        User findUser = userRepository.findByEmail(memberRequestDto.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(memberRequestDto.getEmail()));
 
         // 5. 토큰 발급
         return UserResponseDto.of(findUser, tokenDto.getAccessToken());
     }
 
-    public UserResponseDto updateUser(Principal principal, UpdateUserRequest dto, HttpServletRequest request) {
-        User findUser = memberRepo.findById(Long.valueOf(principal.getName()))
-                .orElseThrow(() -> new RuntimeException("user not found by Id"));
+    public UserResponseDto updateUser(Principal principal, UpdateUserRequest dto, String token) {
+        User findUser = userRepository.findById(Long.valueOf(principal.getName()))
+                .orElseThrow(() -> new UserNotFoundException(Long.valueOf(principal.getName())));
 
         findUser.updateUser(dto.getEmail(), dto.getUserName(), dto.getImage(), dto.getBio());
 
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService{
             findUser.changePassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        return UserResponseDto.of(findUser, resolveToken(request));
+        return UserResponseDto.of(findUser, resolveToken(token));
     }
 
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {

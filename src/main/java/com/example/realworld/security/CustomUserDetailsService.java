@@ -1,7 +1,7 @@
 package com.example.realworld.security;
 
 import com.example.realworld.entity.User;
-import com.example.realworld.repository.UserRepo;
+import com.example.realworld.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +17,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepo userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional

@@ -3,8 +3,8 @@ package com.example.realworld.service;
 import com.example.realworld.controller.dto.ProfileResponseDto;
 import com.example.realworld.entity.Follow;
 import com.example.realworld.entity.User;
-import com.example.realworld.repository.FollowRepo;
-import com.example.realworld.repository.UserRepo;
+import com.example.realworld.repository.FollowRepository;
+import com.example.realworld.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +14,15 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
-    private final UserRepo userRepo;
-    private final FollowRepo followRepo;
+    private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
     @Override
     public ProfileResponseDto getProfile(String userName, Principal principal) {
-        User findUser = userRepo.findByUserName(userName)
+        User findUser = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
-        User loginUser = userRepo.findById(Long.valueOf(principal.getName()))
+        User loginUser = userRepository.findById(Long.valueOf(principal.getName()))
                 .orElseThrow(() -> new RuntimeException("login user not found"));
 
         boolean isFollowing = loginUser.getFollow().stream().anyMatch(f -> f.isFollowing(findUser));
@@ -32,29 +32,29 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileResponseDto follow(String userName, Principal principal) {
-        User loginUser = userRepo.findById(Long.valueOf(principal.getName()))
+        User loginUser = userRepository.findById(Long.valueOf(principal.getName()))
                 .orElseThrow(() -> new RuntimeException("login user not found"));
 
-        User findUser = userRepo.findByUserName(userName)
+        User findUser = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
-        Follow saveFollow = followRepo.save(new Follow(loginUser, findUser));
+        Follow saveFollow = followRepository.save(new Follow(findUser, loginUser));
 
         return ProfileResponseDto.of(loginUser, saveFollow.isFollowing(findUser));
     }
 
     @Override
     public ProfileResponseDto unfollow(String userName, Principal principal) {
-        User loginUser = userRepo.findById(Long.valueOf(principal.getName()))
+        User loginUser = userRepository.findById(Long.valueOf(principal.getName()))
                 .orElseThrow(() -> new RuntimeException("login user not found"));
 
-        User findUser = userRepo.findByUserName(userName)
+        User findUser = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
-        Follow findFollow = followRepo.findByUserAndFollower(findUser, loginUser)
+        Follow findFollow = followRepository.findByUserAndFollower(findUser, loginUser)
                         .orElseThrow(() -> new RuntimeException("follow delete row not found"));
 
-        followRepo.delete(findFollow);
+        followRepository.delete(findFollow);
 
         return ProfileResponseDto.of(loginUser, findFollow.isFollowing(findUser));
     }
