@@ -1,37 +1,50 @@
 package com.example.realworld.controller;
 
+import com.example.realworld.annotation.AuthUser;
 import com.example.realworld.controller.dto.*;
+import com.example.realworld.entity.RefreshToken;
+import com.example.realworld.entity.User;
+import com.example.realworld.security.UserAdapter;
+import com.example.realworld.service.TokenService;
 import com.example.realworld.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final TokenService tokenService;
 
     @GetMapping("/user")
-    public ResponseEntity<UserResponseDto> currentUser(Principal principal, @RequestHeader(name = "Authorization") String token) {
-        return ResponseEntity.ok(userService.getCurrentUser(principal, token));
+    public ResponseEntity<UserResponseDto> currentUser(@AuthUser User user) {
+        return ResponseEntity.ok(UserResponseDto.of(user, getCurrentCredential()));
     }
 
     @PostMapping("/users")
     public ResponseEntity<UserResponseDto> signup(@RequestBody SignUpRequestDto dto) {
-        return ResponseEntity.ok(userService.signup(dto));
+        return ResponseEntity.ok(UserResponseDto.of(userService.signup(dto), null));
     }
 
     @PostMapping("/users/login")
     public ResponseEntity<UserResponseDto> login(@RequestBody LoginRequestDto dto) {
-        return ResponseEntity.ok(userService.login(dto));
+        RefreshToken token = tokenService.createToken(dto.toAuthentication());
+        return ResponseEntity.ok(UserResponseDto.of(userService.login(dto.getEmail()), token.getValue()));
     }
 
     @PutMapping("/user")
-    public ResponseEntity<UserResponseDto> updateUser(Principal principal, @RequestBody UpdateUserRequest dto, @RequestHeader(name = "Authorization") String token) {
-        return ResponseEntity.ok(userService.updateUser(principal, dto, token));
+    public ResponseEntity<UserResponseDto> updateUser(@AuthUser User user, @RequestBody UpdateUserRequest dto) {
+        return ResponseEntity.ok(UserResponseDto.of(userService.updateUser(user, dto), getCurrentCredential()));
+    }
+
+    private String getCurrentCredential() {
+        return SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getCredentials()
+                .toString();
     }
 
 }

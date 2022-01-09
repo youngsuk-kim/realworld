@@ -19,7 +19,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileResponseDto getProfile(String userName, Principal principal) {
-        User findUser = userRepository.findByUserName(userName)
+        User findUser = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
         User loginUser = userRepository.findById(Long.valueOf(principal.getName()))
@@ -35,7 +35,7 @@ public class ProfileServiceImpl implements ProfileService {
         User loginUser = userRepository.findById(Long.valueOf(principal.getName()))
                 .orElseThrow(() -> new RuntimeException("login user not found"));
 
-        User findUser = userRepository.findByUserName(userName)
+        User findUser = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
         Follow saveFollow = followRepository.save(new Follow(findUser, loginUser));
@@ -48,7 +48,7 @@ public class ProfileServiceImpl implements ProfileService {
         User loginUser = userRepository.findById(Long.valueOf(principal.getName()))
                 .orElseThrow(() -> new RuntimeException("login user not found"));
 
-        User findUser = userRepository.findByUserName(userName)
+        User findUser = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
         Follow findFollow = followRepository.findByUserAndFollower(findUser, loginUser)

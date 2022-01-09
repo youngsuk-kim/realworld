@@ -1,16 +1,17 @@
 package com.example.realworld.controller.dto;
 
 import com.example.realworld.entity.User;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import static com.example.realworld.constant.Constants.JSON_TYPE_USER;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 import lombok.*;
 
-@JsonTypeName(JSON_TYPE_USER)
-@JsonTypeInfo(include = WRAPPER_OBJECT, use = NAME)
+@JsonRootName(JSON_TYPE_USER)
 @Builder
 @Getter
 @AllArgsConstructor
@@ -18,7 +19,7 @@ import lombok.*;
 public class UserResponseDto {
     private String email;
     private String token;
-    private String userName;
+    private String username;
     private String bio;
     private String image;
 
@@ -26,7 +27,7 @@ public class UserResponseDto {
         return UserResponseDto.builder()
                 .bio(user.getBio())
                 .image(user.getImage())
-                .userName(user.getUserName())
+                .username(user.getUsername())
                 .email(user.getEmail())
                 .token(accessToken)
                 .build();

@@ -18,12 +18,12 @@ import java.util.Objects;
 @AllArgsConstructor
 public class User {
 
-    public User(Long id, String userName, String email, String password, String bio, String image, Authority authority) {
-        this(id, userName, email, password, bio, image, authority, null);
+    public User(Long id, String username, String email, String password, String bio, String image, Authority authority) {
+        this(id, username, email, password, bio, image, authority, null);
     }
 
-    public User(String userName, String email, String password, String bio, String image, Authority authority) {
-        this(null, userName, email, password, bio, image, authority, null);
+    public User(String username, String email, String password, String bio, String image, Authority authority) {
+        this(null, username, email, password, bio, image, authority, null);
     }
 
     @Id
@@ -31,7 +31,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String userName;
+    private String username;
 
     private String email;
 
@@ -50,7 +50,7 @@ public class User {
 
     public void updateUser(String email, String userName, String image, String bio) {
         if(email != null) this.email = email;
-        if(userName != null) this.userName = userName;
+        if(userName != null) this.username = userName;
         if(image != null) this.image = image;
         if(bio != null) this.bio = bio;
     }

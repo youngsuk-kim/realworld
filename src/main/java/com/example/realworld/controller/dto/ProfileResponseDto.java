@@ -21,7 +21,7 @@ public class ProfileResponseDto {
         return ProfileResponseDto.builder()
                 .bio(user.getBio())
                 .image(user.getImage())
-                .userName(user.getUserName())
+                .userName(user.getUsername())
                 .following(isFollowing)
                 .build();
     }

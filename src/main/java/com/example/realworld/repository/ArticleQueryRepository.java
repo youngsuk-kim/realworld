@@ -59,7 +59,7 @@ public class ArticleQueryRepository {
                 .select(Projections.fields(
                         AuthorResponseDto.class,
                         user.id,
-                        user.userName,
+                        user.username,
                         user.bio,
                         user.image,
                         new CaseBuilder()
@@ -107,7 +107,7 @@ public class ArticleQueryRepository {
         if (!StringUtils.hasText(author)) {
             return null;
         }
-        return user.userName.eq(author);
+        return user.username.eq(author);
     }
 
     private BooleanExpression eqTag(String tag) {
@@ -121,6 +121,6 @@ public class ArticleQueryRepository {
         if (!StringUtils.hasText(favorited)) {
             return null;
         }
-        return QFavorite.favorite.user.userName.eq(favorited);
+        return QFavorite.favorite.user.username.eq(favorited);
     }
 }
