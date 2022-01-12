@@ -1,5 +1,6 @@
 package com.example.realworld.service;
 
+import com.example.realworld.constant.Authority;
 import com.example.realworld.controller.dto.*;
 import com.example.realworld.entity.User;
 import com.example.realworld.exception.UserAlreadySignException;
@@ -20,14 +21,20 @@ public class UserServiceImpl implements UserService {
 
     public User signup(SignUpRequestDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            // TODO. 커스텀 익셉션 만들기
             throw new UserAlreadySignException(dto.getEmail());
         }
 
-        return userRepository.save(dto.toUser(passwordEncoder));
+        User user = User.builder()
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .authority(Authority.ROLE_USER)
+                .build();
+
+        return userRepository.save(user);
     }
 
-    public User login(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }

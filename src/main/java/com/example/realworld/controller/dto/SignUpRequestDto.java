@@ -18,13 +18,4 @@ public class SignUpRequestDto {
     private String email;
     private String password;
     private String username;
-
-    public User toUser(PasswordEncoder passwordEncoder) {
-        return User.builder()
-                .username(username)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .authority(Authority.ROLE_USER)
-                .build();
-    }
 }

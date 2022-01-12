@@ -17,8 +17,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// TODO. 해당 어노테이션 기능 알아보기
 @TestInstance(PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+// TODO. 해당 어노테이션 기능 알아보기
 @AutoConfigureMockMvc
 @SpringBootTest
 class UserControllerTest {

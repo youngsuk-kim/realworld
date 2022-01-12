@@ -8,6 +8,6 @@ import java.security.Principal;
 
 public interface UserService {
     User signup(SignUpRequestDto dto);
-    User login(String email);
+    User findUserByEmail(String email);
     User updateUser(User user, UpdateUserRequest dto);
 }

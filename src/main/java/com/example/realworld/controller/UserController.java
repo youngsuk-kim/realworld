@@ -4,7 +4,6 @@ import com.example.realworld.annotation.AuthUser;
 import com.example.realworld.controller.dto.*;
 import com.example.realworld.entity.RefreshToken;
 import com.example.realworld.entity.User;
-import com.example.realworld.security.UserAdapter;
 import com.example.realworld.service.TokenService;
 import com.example.realworld.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +30,9 @@ public class UserController {
 
     @PostMapping("/users/login")
     public ResponseEntity<UserResponseDto> login(@RequestBody LoginRequestDto dto) {
-        RefreshToken token = tokenService.createToken(dto.toAuthentication());
-        return ResponseEntity.ok(UserResponseDto.of(userService.login(dto.getEmail()), token.getValue()));
+        String token = tokenService.createToken(dto.toAuthentication()).getValue();
+        User user = userService.findUserByEmail(dto.getEmail());
+        return ResponseEntity.ok(UserResponseDto.of(user, token));
     }
 
     @PutMapping("/user")
