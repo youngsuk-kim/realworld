@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
     @Id
@@ -16,10 +16,5 @@ public class Tag {
     @Column(name = "tag_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "article_id")
-    private Article article;
-
-    @Column(name = "name")
-    private String tagName;
+    private String value;
 }

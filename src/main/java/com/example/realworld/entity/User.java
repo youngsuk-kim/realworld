@@ -6,24 +6,23 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import static javax.persistence.CascadeType.REMOVE;
 
 @Builder
 @Entity
 @Table(name = "user")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class User {
 
-    public User(Long id, String username, String email, String password, String bio, String image, Authority authority) {
-        this(id, username, email, password, bio, image, authority, null);
+    public User(Long id, String password, Profile profile, Authority authority) {
+        this(id, password, profile, authority, null);
     }
 
-    public User(String username, String email, String password, String bio, String image, Authority authority) {
-        this(null, username, email, password, bio, image, authority, null);
+    public User(String password, Profile profile, Authority authority) {
+        this(null, password, profile, authority, null);
     }
 
     @Id
@@ -31,32 +30,59 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-
-    private String email;
-
+    @Column
     private String password;
 
-    private String bio;
-
-    private String image;
+    @Embedded
+    private Profile profile;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
-    private List<Follow> follow = new ArrayList<>();
+    @JoinTable(name = "user_followings",
+            joinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "followee_id", referencedColumnName = "user_id"))
+    @OneToMany(cascade = REMOVE)
+    private Set<User> followingUsers = new HashSet<>();
 
     public void updateUser(String email, String userName, String image, String bio) {
-        if(email != null) this.email = email;
-        if(userName != null) this.username = userName;
-        if(image != null) this.image = image;
-        if(bio != null) this.bio = bio;
+        this.profile.updateUser(email, userName, image, bio);
     }
 
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public void addFollower(User follower) {
+        this.followingUsers.add(follower);
+    }
+
+    public boolean isFollowing(User follower) {
+        return this.followingUsers.contains(follower);
+    }
+
+    public boolean unfollow(User follower) {
+        return this.followingUsers.remove(follower);
+    }
+
+    public String getUsername() {
+        return profile.getUsername();
+    }
+
+    public String getBio() {
+        return profile.getBio();
+    }
+
+    public String getEmail() {
+        return profile.getEmail();
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getImage() {
+        return profile.getImage();
     }
 
     @Override

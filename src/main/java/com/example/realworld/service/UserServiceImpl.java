@@ -2,6 +2,7 @@ package com.example.realworld.service;
 
 import com.example.realworld.constant.Authority;
 import com.example.realworld.controller.dto.*;
+import com.example.realworld.entity.Profile;
 import com.example.realworld.entity.User;
 import com.example.realworld.exception.UserAlreadySignException;
 import com.example.realworld.exception.UserNotFoundException;
@@ -20,14 +21,13 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User signup(SignUpRequestDto dto) {
-        if (userRepository.existsByEmail(dto.getEmail())) {
+        if (userRepository.existsByProfileEmail(dto.getEmail())) {
             throw new UserAlreadySignException(dto.getEmail());
         }
 
         User user = User.builder()
-                .username(dto.getUsername())
-                .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
+                .profile(new Profile(dto.getUsername(), dto.getEmail()))
                 .authority(Authority.ROLE_USER)
                 .build();
 
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findFirstByProfileEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
 

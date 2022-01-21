@@ -2,7 +2,6 @@ package com.example.realworld.controller;
 
 import com.example.realworld.annotation.AuthUser;
 import com.example.realworld.controller.dto.*;
-import com.example.realworld.entity.RefreshToken;
 import com.example.realworld.entity.User;
 import com.example.realworld.service.TokenService;
 import com.example.realworld.service.UserService;
@@ -30,7 +29,7 @@ public class UserController {
 
     @PostMapping("/users/login")
     public ResponseEntity<UserResponseDto> login(@RequestBody LoginRequestDto dto) {
-        String token = tokenService.createToken(dto.toAuthentication()).getValue();
+        String token = tokenService.createToken(dto.toAuthentication());
         User user = userService.findUserByEmail(dto.getEmail());
         return ResponseEntity.ok(UserResponseDto.of(user, token));
     }

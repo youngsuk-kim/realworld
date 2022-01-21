@@ -1,11 +1,13 @@
 package com.example.realworld.service;
 
 import com.example.realworld.controller.dto.ProfileResponseDto;
+import com.example.realworld.entity.Profile;
+import com.example.realworld.entity.User;
 
 import java.security.Principal;
 
 public interface ProfileService {
-    ProfileResponseDto getProfile(String userName, Principal principal);
-    ProfileResponseDto follow(String userName, Principal principal);
-    ProfileResponseDto unfollow(String userName, Principal principal);
+    Profile getUserProfile(String followeeName, User follower);
+    Profile follow(String followeeName, User follower);
+    Profile unfollow(String followeeName, User follower);
 }

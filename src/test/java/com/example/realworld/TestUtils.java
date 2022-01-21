@@ -1,6 +1,7 @@
 package com.example.realworld;
 
 import com.example.realworld.constant.Authority;
+import com.example.realworld.entity.Profile;
 import com.example.realworld.entity.User;
 
 public class TestUtils {
@@ -15,8 +16,7 @@ public class TestUtils {
 
     public static User.UserBuilder aUser() {
         return User.builder()
-                .username(USERNAME)
-                .email(EMAIL)
+                .profile(new Profile(USERNAME, EMAIL))
                 .password(PASSWORD)
                 .authority(Authority.ROLE_USER);
     }
